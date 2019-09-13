@@ -1,6 +1,13 @@
-const app = require('axios')
+const axios = require('axios')
+const axiosConfig = {
+  baseURL: 'https://buoyant-yew-252813.appspot.com',
+  timeout: 30000,
+  };
 
-postTest = (year,month,day,hour,minute) => app.post(`http://localhost:8080/book?year=${year}&month=${month}&day=${day}&hour=${hour}&minute=${minute}`)
+const app = axios.create(axiosConfig);
+
+
+postTest = (year, month, day, hour, minute) => app.post(`/book?year=${year}&month=${month}&day=${day}&hour=${hour}&minute=${minute}`)
   .then(
     (res) => {
       console.log(res.data)
@@ -9,7 +16,7 @@ postTest = (year,month,day,hour,minute) => app.post(`http://localhost:8080/book?
     console.error(error)
   })
 
-dailyTest = (year,month,day) => app.get(`http://localhost:8080/timeslots?year=${year}&month=${month}&day=${day}`)
+dailyTest = (year, month=2, day=3) => app.get(`/timeslots?year=${year}&month=${month}&day=${day}`)
   .then((res) => {
     console.log(res.data)
   })
@@ -17,7 +24,7 @@ dailyTest = (year,month,day) => app.get(`http://localhost:8080/timeslots?year=${
     console.error(error)
   })
 
-monthlyTest = (year,month) => app.get(`http://localhost:8080/days?year=${year}&month=${month}`)
+monthlyTest = (year, month) => app.get(`/days?year=${year}&month=${month}`)
   .then((res) => {
     console.log(res.data)
   })
@@ -25,6 +32,6 @@ monthlyTest = (year,month) => app.get(`http://localhost:8080/days?year=${year}&m
     console.error(error)
   })
 
-// dailyTest(2019,10,2)
-postTest(2019,10,2,10,30)
-// monthlyTest(2019,10)
+// dailyTest()
+postTest(2019, 10, 2, 10,55)
+monthlyTest(2019,10)

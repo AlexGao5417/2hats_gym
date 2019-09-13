@@ -70,5 +70,3 @@ exports.slotsTimes = {
       endTime: '17:55:00'
     }]
 }
-
-
