@@ -23,7 +23,6 @@ dailySlotsCheck = (events, dayStart) => {
 checkMonthlySchedule = (events, date) => {
   const monthlySchedule = { success: false, days: [] }
   const monthSlots = new Object()
-  const firstDateOfMonth = new Date(`${date.month} 01, ${date.year} 9:00:00`).toISOString()
   // 2019-09-13T12:00:00+10:00 event
   const dayInMonth = new Date(date.year, date.month, 0).getDate()
   for (let dayCount = 1; dayCount <= dayInMonth; dayCount++) {
@@ -33,16 +32,17 @@ checkMonthlySchedule = (events, date) => {
     const start = event.start.dateTime || event.start.date
     const startTime = Date.parse(new Date(start))
     for (let dayCount = 1; dayCount <= dayInMonth; dayCount++) {
-      const dayStart = Date.parse(new Date(`${date.month} ${dayCount}, ${date.year} 09:00:00`))
-      const dayEnd = Date.parse(new Date(`${date.month} ${dayCount}, ${date.year} 18:00:00`))
+      const dayStart = new Date(Date.UTC(date.year, date.month - 1, dayCount, 9))
+      const dayEnd = new Date(Date.UTC(date.year, date.month - 1, dayCount, 18))
       if (startTime >= dayStart && startTime < dayEnd) {
         monthSlots[dayCount].push(start)
       }
     }
   })
+
   for (key in monthSlots) {
     const freeSlots = monthSlots[key].length
-    const hasTimeSlots = freeSlots !== 16
+    const hasTimeSlots = freeSlots < 12
     if (hasTimeSlots) { monthlySchedule.success = true }
     monthlySchedule.days.push(`{"day": ${key},  "hasTimeSlots": ${hasTimeSlots} }`)
   }
@@ -51,16 +51,20 @@ checkMonthlySchedule = (events, date) => {
 }
 
 checkDailySchedule = (events, date) => {
-  const dayStart = new Date(`${date.month} ${date.day}, ${date.year} 09:00:00`)
+  const dayStart = new Date(Date.UTC(date.year, date.month - 1, date.day, 9))
   const returnSlots = { success: false, timeSlots: [] }
   const courseSlots = dailySlotsCheck(events, dayStart)
   if (!courseSlots[0]) { return returnSlots };
   returnSlots.success = true
   courseSlots.map((courseTime, i) => {
+    const startHour = courseTime.startTime.slice(0, 2)
+    const startMinute = courseTime.startTime.slice(3, 5)
+    const endHour = courseTime.endTime.slice(0, 2)
+    const endMinute = courseTime.endTime.slice(3, 5)
     returnSlots.timeSlots.push(
       {
-        startTime: new Date(`${date.month} ${date.day}, ${date.year} ${courseTime.startTime}`).toISOString(),
-        endTime: new Date(`${date.month} ${date.day}, ${date.year} ${courseTime.endTime}`).toISOString()
+        startTime: new Date(Date.UTC(date.year, date.month - 1, date.day, startHour, startMinute)).toISOString(),
+        endTime: new Date(Date.UTC(date.year, date.month - 1, date.day, endHour, endMinute)).toISOString()
       }
     )
   })
@@ -68,15 +72,13 @@ checkDailySchedule = (events, date) => {
 }
 
 exports.listMonthEvents = async (auth, date) => {
-
   return new Promise((resolve, reject) => {
     if (errorDateHandler(resolve, date, 'monthlyCheck')) return
-    // use this params if we need check for one day
     // use this params if we need check for one month
     listParams = {
       calendarId: 'primary',
-      timeMin: (new Date(`${date.month} 01, ${date.year} 09:00:00`)).toISOString(),
-      maxResults: 20,
+      timeMin: new Date(Date.UTC(date.year, date.month - 1, 1, 9)).toISOString(),
+      maxResults: 1000,
       singleEvents: true,
       orderBy: 'startTime'
     }
@@ -91,11 +93,10 @@ exports.listMonthEvents = async (auth, date) => {
 
 exports.listDailyEvents = async (auth, date) => {
   return new Promise((resolve, reject) => {
-    console.log(date);
     if (errorDateHandler(resolve, date, 'dailyCheck')) return
     listParams = {
       calendarId: 'primary',
-      timeMin: new Date(`${date.year}/${date.month}/${date.day}`),
+      timeMin: new Date(Date.UTC(date.year, date.month - 1, date.day)),
       maxResults: 20,
       singleEvents: true,
       orderBy: 'startTime'
@@ -114,13 +115,14 @@ exports.postNewEvent = async (auth, date) => {
   return new Promise((resolve, reject) => {
     // error handling
     if (errorDateHandler(resolve, date, 'postNewEvent')) return
-    const lagAdjust = constants.constants.lagAdjust
+    // const lagAdjust = constants.constants.lagAdjust
     const fourtyMinutes = constants.constants.fourtyMinutesUTC
-    const startTime = new Date(`${date.month} ${date.day}, ${date.year} ${date.hour}:${date.minute}:00`)
+    const startTime = new Date(Date.UTC(date.year, date.month - 1, date.day, date.hour, date.minute))
+
     const endTime = new Date(Date.parse(startTime) + fourtyMinutes)
-    // add 10 hours to get ISO time
-    const startTimeAdjust = new Date(Date.parse(startTime) + lagAdjust)
-    const endTimeAdjust = new Date(Date.parse(startTimeAdjust) + fourtyMinutes)
+    // // add 10 hours to get ISO time
+    // const startTimeAdjust = new Date(Date.parse(startTime) + lagAdjust)
+    // const endTimeAdjust = new Date(Date.parse(startTimeAdjust) + fourtyMinutes)
     const today = new Date()
     event = {
       start: { dateTime: `${startTime.toISOString()}` },
@@ -129,24 +131,10 @@ exports.postNewEvent = async (auth, date) => {
     listParams = { calendarId: 'primary', resource: event }
     const calendar = google.calendar({ version: 'v3', auth })
 
-    if (!constants.startTimeSlots.includes(`${startTimeAdjust.toISOString().slice(11, 19)}`)) {
+    if (!constants.startTimeSlots.includes(`${startTime.toISOString().slice(11, 19)}`)) {
       resolve({
         success: false,
         message: 'Invalid time slot'
-      })
-      return
-    }
-    if ((startTimeAdjust - today) < constants.constants.oneDayUTC) {
-      resolve({
-        success: false,
-        message: 'Cannot book with less than 24 hours in advance'
-      })
-      return
-    }
-    if (startTime.getHours() > 17 || startTime.getHours() < 9) {
-      resolve({
-        success: false,
-        message: 'Cannot book outside bookable timeframe'
       })
       return
     }
@@ -154,6 +142,20 @@ exports.postNewEvent = async (auth, date) => {
       resolve({
         success: false,
         message: 'Cannot book time in the past'
+      })
+      return
+    }
+    if ((startTime - today) < constants.constants.oneDayUTC) {
+      resolve({
+        success: false,
+        message: 'Cannot book with less than 24 hours in advance'
+      })
+      return
+    }
+    if (startTime.getUTCHours() > 17 || startTime.getUTCHours() < 9) {
+      resolve({
+        success: false,
+        message: 'Cannot book outside bookable timeframe'
       })
       return
     }
