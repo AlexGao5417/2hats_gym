@@ -1,27 +1,38 @@
 const express = require('express')
 const app = express()
-const utilities = require('./utilities')
+const dailyCheck = require('./checkActions/dailyCheck')
+const monthlyCheck = require('./checkActions/monthlyCheck')
+const postCheck = require('./checkActions/postCheck')
+const authentication = require('./authentication') 
+
+
+
 
 app.get('/days', async (req, res) => {
+  auth = await authentication.getAuth()
   const date = {
     year: req.query.year,
     month: req.query.month
   }
-  const result = await utilities.authenticate(date, utilities.listMonthEvents, res)
+  const result = await monthlyCheck.listMonthEvents(auth, date)
   res.send(result)
 })
 
+
 app.get('/timeslots', async (req, res) => {
-  const date = {
+  auth = await authentication.getAuth()
+    const date = {
     year: req.query.year,
     month: req.query.month,
     day: req.query.day
   }
-  const result = await utilities.authenticate(date, utilities.listDailyEvents, res)
+  const result = await dailyCheck.listDailyEvents(auth, date)
   res.send(result)
 })
 
+
 app.post('/book', async (req, res) => {
+  auth = await authentication.getAuth()
   const booking = {
     year: req.query.year,
     month: req.query.month,
@@ -29,7 +40,7 @@ app.post('/book', async (req, res) => {
     hour: req.query.hour,
     minute: req.query.minute
   }
-  const result = await utilities.authenticate(booking, utilities.postNewEvent, res)
+  const result = await postCheck.postNewEvent(auth, booking)
   res.send(result)
 })
 
