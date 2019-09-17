@@ -5,12 +5,12 @@ This is the second submition, I am already check every condition again and again
 
 ## Post test
 
-![Post]('https://github.com/AlexGao5417/2hats_gym/blob/master/testImg/1.png')
-![Invalid Post]("https://github.com/AlexGao5417/2hats_gym/blob/master/testImg/2.png")
-![Post in past]("https://github.com/AlexGao5417/2hats_gym/blob/master/testImg/3.png")
-![Missing minute]("https://github.com/AlexGao5417/2hats_gym/blob/master/testImg/4.png")
-![Less 24 hours]("https://github.com/AlexGao5417/2hats_gym/blob/master/testImg/5.png")
-![outside bookable timeframe]("https://github.com/AlexGao5417/2hats_gym/blob/master/testImg/6.png")
+![Post]('https://github.com/AlexGao5417/2hats_gym/blob/master/testImg/1.png?raw=true')
+![Invalid Post]("https://github.com/AlexGao5417/2hats_gym/blob/master/testImg/2.png?raw=true")
+![Post in past]("https://github.com/AlexGao5417/2hats_gym/blob/master/testImg/3.png?raw=true")
+![Missing minute]("https://github.com/AlexGao5417/2hats_gym/blob/master/testImg/4.png?raw=true")
+![Less 24 hours]("https://github.com/AlexGao5417/2hats_gym/blob/master/testImg/5.png?raw=true")
+![outside bookable timeframe]("https://github.com/AlexGao5417/2hats_gym/blob/master/testImg/6.png?raw=true")
 <br/>
 if there still are bugs, please tell me details, especially the difference between the correct response and the incorrect response. I can't be more appreciated for that!!! 
 <br/> Thank you!
