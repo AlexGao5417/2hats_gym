@@ -1,4 +1,4 @@
-# 2hats_gym
+# gym_booking
 This is app is already uploaded to Google App Engine, which has URL as "https://buoyant-yew-252813.appspot.com"
 <br/> 
 This is the second submition, I am already check every condition again and again, you can check the attached img in folder `testImg`
