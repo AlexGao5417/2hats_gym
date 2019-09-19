@@ -3,7 +3,6 @@ const { google } = require('googleapis')
 const TOKEN_PATH = 'token.json'
 
 
-
 getToken = () => {
   return new Promise((resolve, reject) => {
     fs.readFile('credentials.json', async (err, content) => {
@@ -19,6 +18,7 @@ getToken = () => {
     })
   })
 }
+
 setAuth = (oAuth2Client) => {
   return new Promise((resolve, reject) => {
     fs.readFile(TOKEN_PATH, async (err, token) => {
@@ -35,6 +35,3 @@ exports.getAuth = async () => {
   return auth
 }
 
-
-//      result = await action(oAuth2Client, date)
-//      resolve(result)

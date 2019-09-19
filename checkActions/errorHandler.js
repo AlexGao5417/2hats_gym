@@ -1,7 +1,6 @@
 exports.errorDateHandler = (date, type) => {
 
   if (date.month === undefined || date.month === 'undefined') {
-    console.log("month problem");
     return({
       "success": false,
       "message": "Request is missing parameter: month"

@@ -33,21 +33,22 @@ monthlyTest = (year, month) => app.get(`http://localhost:8080/days?year=${year}&
   })
 
   // dailyTest(2019, 10)
-// postTest(2019, 10, 9, 9,45)http://localhost:8080/timeslots?year=2019&month=10&day=25
-// postTest(2019, 10, 9, 10,30)
-// postTest(2019, 10, 9, 11,15)
-// postTest(2019, 10, 9, 12,00)
-// postTest(2019, 10, 9, 12,45)
-// postTest(2019, 10, 9, 13,30)
-// postTest(2019, 10, 9, 14,15)
-// postTest(2019, 10, 9, 15,0)
-// postTest(2019, 10, 9, 15,45)
-// postTest(2019, 10, 9, 16,30)
-// postTest(2019, 10, 9, 17,15)
+// postTest(2019, 9, 23, 1)
+// postTest(2019, 9, 23, 9,45)
+// postTest(2019, 9, 23, 10,30)
+// postTest(2019, 9, 23, 11,15)
+// postTest(2019, 9, 23, 12,00)
+// postTest(2019, 9, 23, 12,45)
+// postTest(2019, 9, 23, 13,30)
+// postTest(2019, 9, 23, 14,15)
+// postTest(2019, 9, 23, 15,0)
+// postTest(2019, 9, 23, 15,45)
+// postTest(2019, 9, 23, 16,30)
+// postTest(2019, 9, 23, 17,15)
 
 // postTest(2019, 9, 17, 15,45)
 
-monthlyTest(2019)
+// monthlyTest(2019)
 
 // console.log({a:"d"});
 // console.log({"a":"d"});
