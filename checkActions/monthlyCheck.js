@@ -15,7 +15,10 @@ exports.listMonthEvents = async (auth, date) => {
     }
     const calendar = google.calendar({ version: 'v3', auth })
     calendar.events.list(listParams, (err, res) => {
-      if (err) reject('The API returned an error: ' + err)
+      if (err) reject({
+        success: false,
+        message: 'The API returned an error: ' + err
+      })
       const events = res.data.items
       resolve(checkMonthlySchedule(events, date))
     })

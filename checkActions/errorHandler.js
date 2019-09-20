@@ -20,6 +20,12 @@ exports.errorDateHandler = (date, type) => {
     })
   }
   if (type === 'dailyCheck') return "valid"
+  if (date.hour === undefined || date.hour === 'undefined') {
+    return({
+      "success": false,
+      "message": "Request is missing parameter: hour"
+    })
+  }
   if (date.minute === undefined || date.minute === 'undefined') {
     return({
       "success": false,
